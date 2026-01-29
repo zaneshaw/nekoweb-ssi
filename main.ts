@@ -186,11 +186,11 @@ Bun.serve({
 			html = await resolveDirectives(html);
 
 			return new Response(html, { headers: { "Content-Type": "text/html" } });
-		} else if (dest == "empty") {
-			return new Response(null);
-		} else {
+		} else if (req.headers.has("accept")) {
 			return new Response(Bun.file(join(config.public_path, url.pathname)));
 		}
+
+		return new Response(null, { status: 404 });
 	},
 });
 
