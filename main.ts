@@ -1,5 +1,9 @@
-import config from "./config.json";
 import { join } from "path";
+
+type Config = {
+	port: number;
+	public_path: string;
+};
 
 type Directive = {
 	type: "include" | "layout" | "block" | "endblock";
@@ -7,6 +11,8 @@ type Directive = {
 	startIndex: number;
 	endIndex: number;
 };
+
+let config: Config;
 
 let layout: string | undefined;
 
@@ -147,6 +153,18 @@ async function resolveDirectives(html: string) {
 	return html;
 }
 
+const configFile = Bun.file(join(import.meta.dir, "config.json"));
+if (await configFile.exists()) {
+	config = await configFile.json();
+} else {
+	config = {
+		port: 3000,
+		public_path: "C:\\PATH\\TO\\WEBSITE",
+	};
+
+	await configFile.write(JSON.stringify(config, null, "\t"));
+}
+
 Bun.serve({
 	port: config.port,
 	async fetch(req) {
@@ -175,4 +193,4 @@ Bun.serve({
 	},
 });
 
-console.log(`server started on port ${config.port}`);
+console.log(`server running at http://localhost:${config.port}/index.html`);
