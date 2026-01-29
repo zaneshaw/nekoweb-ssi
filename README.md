@@ -1,15 +1,10 @@
 # nekoweb-ssi
 
-To install dependencies:
+### how to use
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run main.ts
-```
-
-This project was created using `bun init` in bun v1.3.2. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+1. clone this repo
+2. install bun at https://bun.com/docs/installation
+3. open a terminal in the repo's directory
+4. install dependencies with `bun install`
+5. configure the path to your website in `config.json`
+6. run the server with `bun run main.ts`
