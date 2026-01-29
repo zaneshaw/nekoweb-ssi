@@ -1,12 +1,12 @@
 {
   "name": "nekoweb-ssi",
-  "module": "index.ts",
-  "type": "module",
-  "private": true,
+  "module": "main.ts",
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
-  }
+  },
+  "private": true,
+  "type": "module"
 }
