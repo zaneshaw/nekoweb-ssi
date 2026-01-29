@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join, dirname } from "path";
 
 type Config = {
 	port: number;
@@ -12,8 +12,9 @@ type Directive = {
 	endIndex: number;
 };
 
-let config: Config;
+const rootDir = process.env.BUILD == "true" ? dirname(process.execPath) : import.meta.dir;
 
+let config: Config;
 let layout: string | undefined;
 
 // https://stackoverflow.com/a/40782646
@@ -153,7 +154,7 @@ async function resolveDirectives(html: string) {
 	return html;
 }
 
-const configFile = Bun.file(join(import.meta.dir, "config.json"));
+const configFile = Bun.file(join(rootDir, "config.json"));
 if (await configFile.exists()) {
 	config = await configFile.json();
 } else {

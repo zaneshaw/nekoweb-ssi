@@ -1,13 +1,25 @@
 # nekoweb-ssi
 
-really bad and rushed implementation of nekoweb's new ssi system. can't guarantee this will work with your website (probably won't). things *will* break.
+really bad and rushed implementation of nekoweb's new ssi system. can't guarantee this will work with your website (probably won't). things _will_ break.
 
 ### supported directives
+
 - include directive
 - layout directive
 - block directive
 
-### how to use
+## how to use
+
+### executable (recommended)
+
+1. download the [latest release](https://github.com/zaneshaw/nekoweb-ssi/releases/latest)
+2. run `ssi-server.exe`, then close it
+3. configure the path to your website in `config.json`
+4. run `ssi-server.exe` again
+5. navigate to https://localhost:3000 by default
+
+### source
+
 1. clone this repo
 2. install bun at https://bun.com/docs/installation
 3. open a terminal in the repo's directory
@@ -15,10 +27,17 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 5. configure the path to your website in `config.json`
 6. run the server with `bun run main.ts`
 
-### todo
+## building
+
+```bash
+bun build ./main.ts --compile --outfile ssi-server --define "process.env.BUILD='true'"
+```
+
+## todo
+
 - [ ] better parsing
 - [ ] better validation
-- [ ] _catchall.html
+- [ ] \_catchall.html
 - [ ] render directive
 - [ ] error directive
 - [ ] list directive
