@@ -54,6 +54,26 @@ function parseDirectives(html: string) {
 	return directives;
 }
 
+function getEndBlock(startBlock: Directive, directives: Directive[]) {
+	let level = 0;
+
+	for (const directive of directives) {
+		if (directive.startIndex > startBlock.endIndex) {
+			if (directive.type == "block") {
+				level++;
+			} else if (directive.type == "endblock") {
+				level--;
+
+				if (level == -1) {
+					return directive;
+				}
+			}
+		}
+	}
+
+	return null;
+}
+
 async function resolveIncludeDirective(html: string, directive: Directive) {
 	if (directive.args.file) {
 		const file = Bun.file(join(config.public_path, directive.args.file));
@@ -67,21 +87,48 @@ async function resolveIncludeDirective(html: string, directive: Directive) {
 	return html;
 }
 
-async function resolveBlockDirective(html: string, directive: string, endDirective: string) {
-	console.log(html.indexOf(directive), html.indexOf(endDirective));
+async function resolveBlockDirective(html: string, directive: Directive, endDirective: Directive) {
+	const blockContent = html.substring(directive.endIndex, endDirective.startIndex);
+
+	const lDirectives = parseDirectives(layout!);
+	for (const lDirective of lDirectives) {
+		if (lDirective.type == "block" && lDirective.args.name == directive.args.name) {
+			const lEndBlock = getEndBlock(lDirective, lDirectives);
+			if (lEndBlock) {
+				layout = replaceBetween(layout!, blockContent, lDirective.startIndex, lEndBlock.endIndex);
+			}
+		}
+	}
 
 	return html;
 }
 
-async function resolveDirectives(html: string, directives: Directive[]) {
+async function resolveDirectives(html: string) {
+	const directives = parseDirectives(html);
+
 	// loop just looks for the first handled directive
 	for (let i = 0; i < directives.length; i++) {
 		const directive = directives[i]!;
 
 		if (directive.type == "include") {
 			const resolved = await resolveIncludeDirective(html, directive);
-			return resolveDirectives(resolved, directives.toSpliced(i, 1));
+			return resolveDirectives(resolved);
+		} else if (directive.type == "layout" && layout == undefined) {
+			if (directive.args.file) {
+				const file = Bun.file(join(config.public_path, directive.args.file));
+				layout = await file.text();
+			}
+		} else if (directive.type == "block" && layout != undefined) {
+			const endBlock = getEndBlock(directive, directives);
+
+			if (endBlock) {
+				const resolved = await resolveBlockDirective(html, directive, endBlock);
+			}
 		}
+	}
+
+	if (layout != undefined) {
+		return layout;
 	}
 
 	return html;
@@ -98,22 +145,20 @@ Bun.serve({
 			return new Response(null);
 		}
 
-		if (dest == "document") {
+		if (dest == "document" && url.pathname.split(".").at(-1) == "html") {
 			const path = url.pathname == "/" ? "index.html" : url.pathname;
 			const file = Bun.file(join(config.public_path, path));
 			let html = await file.text();
 
-			const directives = parseDirectives(html);
-			html = await resolveDirectives(html, directives);
+			layout = undefined;
+			html = await resolveDirectives(html);
 
 			return new Response(html, { headers: { "Content-Type": "text/html" } });
-		} else if (dest == "image" || dest == "script" || dest == "font" || dest == "iframe") {
-			return new Response(Bun.file(join(config.public_path, url.pathname)));
 		} else if (dest == "empty") {
 			return new Response(null);
+		} else {
+			return new Response(Bun.file(join(config.public_path, url.pathname)));
 		}
-
-		return new Response(null, { status: 404 });
 	},
 });
 
