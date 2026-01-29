@@ -90,17 +90,23 @@ async function resolveIncludeDirective(html: string, directive: Directive) {
 async function resolveBlockDirective(html: string, directive: Directive, endDirective: Directive) {
 	const blockContent = html.substring(directive.endIndex, endDirective.startIndex);
 
-	const lDirectives = parseDirectives(layout!);
-	for (const lDirective of lDirectives) {
-		if (lDirective.type == "block" && lDirective.args.name == directive.args.name) {
-			const lEndBlock = getEndBlock(lDirective, lDirectives);
-			if (lEndBlock) {
-				layout = replaceBetween(layout!, blockContent, lDirective.startIndex, lEndBlock.endIndex);
+	if (layout) {
+		const lDirectives = parseDirectives(layout!);
+		for (const lDirective of lDirectives) {
+			if (lDirective.type == "block" && lDirective.args.name == directive.args.name) {
+				const lEndBlock = getEndBlock(lDirective, lDirectives);
+				if (lEndBlock) {
+					layout = replaceBetween(layout!, blockContent, lDirective.startIndex, lEndBlock.endIndex);
+				}
 			}
 		}
 	}
 
-	return html;
+	const left = html.slice(0, directive.startIndex);
+	const middle = html.slice(directive.endIndex, endDirective.startIndex);
+	const right = html.slice(endDirective.endIndex);
+
+	return left + middle + right;
 }
 
 async function resolveDirectives(html: string) {
@@ -118,17 +124,24 @@ async function resolveDirectives(html: string) {
 				const file = Bun.file(join(config.public_path, directive.args.file));
 				layout = await file.text();
 			}
-		} else if (directive.type == "block" && layout != undefined) {
+		} else if (directive.type == "block") {
 			const endBlock = getEndBlock(directive, directives);
 
 			if (endBlock) {
 				const resolved = await resolveBlockDirective(html, directive, endBlock);
+
+				return resolveDirectives(resolved);
 			}
+
+			// todo: remove start block if no end block
 		}
 	}
 
 	if (layout != undefined) {
-		return layout;
+		const newHtml = layout;
+		layout = undefined;
+
+		return resolveDirectives(newHtml);
 	}
 
 	return html;
