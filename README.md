@@ -33,8 +33,13 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 bun run build
 ```
 
+## known problems
+
+- turning pretty links off will break your site until you clear the cache
+
 ## todo
 
+- [ ] unit tests
 - [ ] better parsing
 - [ ] better validation
 - [ ] \_catchall.html

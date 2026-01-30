@@ -60,19 +60,22 @@ async function resolveDirectives(html: string) {
 	return html;
 }
 
+const defaultConfig = {
+	port: 3000,
+	public_path: "C:\\PATH\\TO\\WEBSITE",
+	pretty_links: false,
+};
 const configFile = Bun.file(join(rootDir, "config.json"));
+
 if (await configFile.exists()) {
-	config = await configFile.json();
+	config = Object.assign(defaultConfig, await configFile.json());
 } else {
 	console.log("\x1b[32m%s\x1b[0m", "IMPORTANT: config.json created. edit the config and restart the server!");
 
-	config = {
-		port: 3000,
-		public_path: "C:\\PATH\\TO\\WEBSITE",
-	};
-
-	await configFile.write(JSON.stringify(config, null, "\t"));
+	config = defaultConfig;
 }
+
+await configFile.write(JSON.stringify(config, null, "\t"));
 
 Bun.serve({
 	port: config.port,
@@ -80,9 +83,19 @@ Bun.serve({
 		const dest = req.headers.get("sec-fetch-dest");
 		const url = new URL(req.url);
 
-		if (dest == "document" && (url.pathname == "/" || url.pathname.split(".").at(-1) == "html")) {
-			const path = url.pathname == "/" ? "index.html" : url.pathname;
-			const file = Bun.file(join(config.public_path, path));
+		if (dest == "document" && req.headers.get("accept")?.split(",").includes("text/html")) {
+			if (config.pretty_links) {
+				if (url.pathname.endsWith(".html")) {
+					const prettyPath = url.pathname.slice(0, -5);
+					return Response.redirect(new URL(prettyPath, url.origin).toString(), 301);
+				} else if (url.pathname == "/index") {
+					return Response.redirect(url.origin, 301);
+				} else {
+					url.pathname += url.pathname == "/" ? "index.html" : ".html";
+				}
+			}
+
+			const file = Bun.file(join(config.public_path, url.pathname));
 			let html = await file.text();
 
 			layout = undefined;

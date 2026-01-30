@@ -1,6 +1,7 @@
 export type Config = {
 	port: number;
 	public_path: string;
+	pretty_links: boolean;
 };
 
 export type Directive = {
