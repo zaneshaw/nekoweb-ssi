@@ -2,12 +2,14 @@
 	"name": "nekoweb-ssi",
 	"module": "main.ts",
 	"scripts": {
-		"dev": "bun run --watch main.ts",
-		"serve": "bun run main.ts",
-		"build": "bun build ./main.ts --compile --outfile ssi-server --define 'process.env.BUILD=\"true\"'"
+		"dev": "bun run --watch ./src/main.ts",
+		"serve": "bun run ./src/main.ts",
+		"build": "bun build ./src/main.ts --compile --outfile ssi-server --define 'process.env.BUILD=\"true\"'"
 	},
 	"devDependencies": {
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"prettier": "^3.8.1",
+		"prettier-plugin-sort-imports": "^1.8.9"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

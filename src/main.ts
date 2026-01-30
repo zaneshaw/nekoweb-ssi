@@ -1,0 +1,98 @@
+import { join, dirname, resolve } from "path";
+import type { Config, Directive } from "./types";
+import { getEndBlock, resolveBlockDirective } from "./directives/blockDirective";
+import { replaceBetween } from "./utils";
+import { parseDirectives } from "./parser";
+import { resolveLayoutDirective } from "./directives/layoutDirective";
+
+const rootDir = process.env.BUILD == "true" ? dirname(process.execPath) : resolve(import.meta.dir, "..");
+
+export let config: Config;
+let layout: string | undefined;
+
+async function resolveIncludeDirective(html: string, directive: Directive) {
+	if (directive.args.file) {
+		const file = Bun.file(join(config.public_path, directive.args.file));
+		const includeHtml = await file.text();
+
+		const patchedHtml = replaceBetween(html, includeHtml, directive.startIndex, directive.endIndex);
+
+		return patchedHtml;
+	}
+
+	return html;
+}
+
+async function resolveDirectives(html: string) {
+	const directives = parseDirectives(html);
+
+	// loop just looks for the first handled directive
+	for (let i = 0; i < directives.length; i++) {
+		const directive = directives[i]!;
+
+		if (directive.type == "include") {
+			const resolved = await resolveIncludeDirective(html, directive);
+			return resolveDirectives(resolved);
+		} else if (directive.type == "layout" && layout == undefined) {
+			layout = await resolveLayoutDirective(directive);
+			return resolveDirectives(html); // probably unneeded
+		} else if (directive.type == "block") {
+			const endBlock = getEndBlock(directive, directives);
+
+			if (endBlock) {
+				const resolved = resolveBlockDirective(html, layout, directive, endBlock);
+
+				layout = resolved.layout;
+				return resolveDirectives(resolved.html);
+			}
+
+			// todo: remove start block if no end block
+		}
+	}
+
+	if (layout != undefined) {
+		const newHtml = layout;
+		layout = undefined;
+
+		return resolveDirectives(newHtml);
+	}
+
+	return html;
+}
+
+const configFile = Bun.file(join(rootDir, "config.json"));
+if (await configFile.exists()) {
+	config = await configFile.json();
+} else {
+	config = {
+		port: 3000,
+		public_path: "C:\\PATH\\TO\\WEBSITE",
+	};
+
+	await configFile.write(JSON.stringify(config, null, "\t"));
+}
+
+Bun.serve({
+	port: config.port,
+	async fetch(req) {
+		const dest = req.headers.get("sec-fetch-dest");
+		const url = new URL(req.url);
+
+		if (dest == "document" && (url.pathname == "/" || url.pathname.split(".").at(-1) == "html")) {
+			const path = url.pathname == "/" ? "index.html" : url.pathname;
+			const file = Bun.file(join(config.public_path, path));
+			let html = await file.text();
+
+			layout = undefined;
+			html = await resolveDirectives(html);
+
+			return new Response(html, { headers: { "Content-Type": "text/html" } });
+		} else if (req.headers.has("accept")) {
+			return new Response(Bun.file(join(config.public_path, url.pathname)));
+		}
+
+		return new Response(null, { status: 404 });
+	},
+});
+
+console.log(`server running at http://localhost:${config.port}`);
