@@ -25,12 +25,12 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 3. open a terminal in the repo's directory
 4. install dependencies with `bun install`
 5. configure the path to your website in `config.json`
-6. run the server with `bun run main.ts`
+6. run the server with `bun run serve`
 
 ## building
 
 ```bash
-bun build ./main.ts --compile --outfile ssi-server --define "process.env.BUILD='true'"
+bun run build
 ```
 
 ## todo

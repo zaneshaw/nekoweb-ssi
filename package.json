@@ -1,12 +1,17 @@
 {
-  "name": "nekoweb-ssi",
-  "module": "main.ts",
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "private": true,
-  "type": "module"
+	"name": "nekoweb-ssi",
+	"module": "main.ts",
+	"scripts": {
+		"dev": "bun run --watch main.ts",
+		"serve": "bun run main.ts",
+		"build": "bun build ./main.ts --compile --outfile ssi-server --define 'process.env.BUILD=\"true\"'"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"private": true,
+	"type": "module"
 }
