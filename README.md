@@ -27,6 +27,15 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 5. configure the path to your website in `config.json`
 6. run the server with `bun run serve`
 
+## configuration
+
+<!-- prettier-ignore -->
+| key          | type    | default value                 | description |
+|--------------|---------|-------------------------------|-------------|
+| port         | number  | 3000                          | the port that the server will run on. you can access your site once the server is running at http://localhost:{PORT} |
+| public_path  | string  | "C:\\\\PATH\\\\TO\\\\WEBSITE" | the local path to your website on your computer. this is where your index.html should be |
+| pretty_links | boolean | false                         | redirects html pages to a prettified version with the ".html" extension removed (/page.html => /page, /index.html => /) |
+
 ## building
 
 ```bash
