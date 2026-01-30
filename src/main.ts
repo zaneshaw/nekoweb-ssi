@@ -64,6 +64,8 @@ const configFile = Bun.file(join(rootDir, "config.json"));
 if (await configFile.exists()) {
 	config = await configFile.json();
 } else {
+	console.log("\x1b[32m%s\x1b[0m", "IMPORTANT: config.json created. edit the config and restart the server!");
+
 	config = {
 		port: 3000,
 		public_path: "C:\\PATH\\TO\\WEBSITE",
