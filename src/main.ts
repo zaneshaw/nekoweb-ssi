@@ -1,9 +1,9 @@
-import { join, dirname, resolve } from "path";
-import type { Config, Directive } from "./types";
 import { getEndBlock, resolveBlockDirective } from "./directives/blockDirective";
-import { replaceBetween } from "./utils";
-import { parseDirectives } from "./parser";
 import { resolveLayoutDirective } from "./directives/layoutDirective";
+import { parseDirectives } from "./parser";
+import type { Config, Directive } from "./types";
+import { replaceBetween } from "./utils";
+import { join, dirname, resolve } from "path";
 
 const rootDir = process.env.BUILD == "true" ? dirname(process.execPath) : resolve(import.meta.dir, "..");
 

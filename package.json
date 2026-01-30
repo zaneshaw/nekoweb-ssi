@@ -7,9 +7,9 @@
 		"build": "bun build ./src/main.ts --compile --outfile ssi-server --define 'process.env.BUILD=\"true\"'"
 	},
 	"devDependencies": {
+		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
 		"@types/bun": "latest",
-		"prettier": "^3.8.1",
-		"prettier-plugin-sort-imports": "^1.8.9"
+		"prettier": "^3.8.1"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

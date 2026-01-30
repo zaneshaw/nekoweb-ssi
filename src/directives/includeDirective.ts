@@ -1,7 +1,7 @@
-import { join } from "path";
-import type { Directive } from "../types";
 import { config } from "../main";
+import type { Directive } from "../types";
 import { replaceBetween } from "../utils";
+import { join } from "path";
 
 export async function resolveIncludeDirective(html: string, directive: Directive) {
 	if (directive.args.file) {

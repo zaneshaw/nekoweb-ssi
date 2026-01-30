@@ -1,6 +1,6 @@
-import { join } from "path";
 import { config } from "../main";
 import type { Directive } from "../types";
+import { join } from "path";
 
 export async function resolveLayoutDirective(directive: Directive) {
 	if (directive.args.file) {
