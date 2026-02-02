@@ -1,8 +1,8 @@
 import { getEndBlock, resolveBlockDirective } from "./directives/blockDirective";
+import { resolveIncludeDirective } from "./directives/includeDirective";
 import { resolveLayoutDirective } from "./directives/layoutDirective";
 import { parseDirectives } from "./parser";
-import type { Config, Directive } from "./types";
-import { replaceBetween } from "./utils";
+import type { Config } from "./types";
 import { join, dirname, resolve } from "path";
 
 const rootDir = process.env.BUILD == "true" ? dirname(process.execPath) : resolve(import.meta.dir, "..");
@@ -10,20 +10,7 @@ const rootDir = process.env.BUILD == "true" ? dirname(process.execPath) : resolv
 export let config: Config;
 let layout: string | undefined;
 
-async function resolveIncludeDirective(html: string, directive: Directive) {
-	if (directive.args.file) {
-		const file = Bun.file(join(config.public_path, directive.args.file));
-		const includeHtml = await file.text();
-
-		const patchedHtml = replaceBetween(html, includeHtml, directive.startIndex, directive.endIndex);
-
-		return patchedHtml;
-	}
-
-	return html;
-}
-
-async function resolveDirectives(html: string) {
+export async function resolveDirectives(html: string) {
 	const directives = parseDirectives(html);
 
 	// loop just looks for the first handled directive
