@@ -1,6 +1,6 @@
-import { getEndBlock, resolveBlockDirective } from "./directives/blockDirective";
 import { resolveIncludeDirective } from "./directives/includeDirective";
-import { resolveLayoutDirective } from "./directives/layoutDirective";
+import { resolveLayoutDirective, getEndBlock, resolveBlockDirective } from "./directives/layoutDirective";
+import { resolveFollowersDirective, resolveUpdatesDirective, resolveViewsDirective } from "./directives/statDirectives";
 import { parseDirectives } from "./parser";
 import type { Config } from "./types";
 import { join, dirname, resolve } from "path";
@@ -34,6 +34,15 @@ export async function resolveDirectives(html: string) {
 			}
 
 			// todo: remove start block if no end block
+		} else if (directive.type == "views") {
+			const resolved = await resolveViewsDirective(html, directive);
+			return resolveDirectives(resolved);
+		} else if (directive.type == "followers") {
+			const resolved = await resolveFollowersDirective(html, directive);
+			return resolveDirectives(resolved);
+		} else if (directive.type == "updates") {
+			const resolved = await resolveUpdatesDirective(html, directive);
+			return resolveDirectives(resolved);
 		}
 	}
 
@@ -51,6 +60,7 @@ const defaultConfig = {
 	port: 3000,
 	public_path: "C:\\PATH\\TO\\WEBSITE",
 	pretty_links: false,
+	site_domain: null,
 };
 const configFile = Bun.file(join(rootDir, "config.json"));
 
@@ -59,7 +69,7 @@ if (await configFile.exists()) {
 } else {
 	console.log("\x1b[32m%s\x1b[0m", "IMPORTANT: config.json created. edit the config and restart the server!");
 
-	config = defaultConfig;
+	config = defaultConfig as Config;
 }
 
 await configFile.write(JSON.stringify(config, null, "\t"));

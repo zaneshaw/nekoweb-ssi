@@ -2,11 +2,25 @@
 
 really bad and rushed implementation of nekoweb's new ssi system. can't guarantee this will work with your website (probably won't). things _will_ break.
 
-### supported directives
+### supported features
 
-- include directive
-- layout directive
-- block directive
+| feature             | supported | notes                  |
+| ------------------- | --------- | ---------------------- |
+| include directive   | ✅        |                        |
+| layout directive    | ✅        |                        |
+| block directive     | ✅        |                        |
+| flastmod directive  | ❌        |                        |
+| fsize directive     | ❌        |                        |
+| views directive     | ✅        |                        |
+| followers directive | ✅        |                        |
+| updates directive   | ✅        |                        |
+| follow directive    | ❌        |                        |
+| render directive    | ❌        | i don't have neko tier |
+| error directive     | ❌        | i don't have neko tier |
+| list directive      | ❌        | i don't have neko tier |
+| variables           | ❌        |                        |
+| \_catchall.html     | ❌        |                        |
+| include depth       | ❌        |                        |
 
 ## how to use
 
@@ -29,12 +43,12 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 
 ## configuration
 
-<!-- prettier-ignore -->
-| key          | type    | default value                 | description |
-|--------------|---------|-------------------------------|-------------|
-| port         | number  | 3000                          | the port that the server will run on. you can access your site once the server is running at http://localhost:{PORT} |
-| public_path  | string  | "C:\\\\PATH\\\\TO\\\\WEBSITE" | the local path to your website on your computer. this is where your index.html should be |
-| pretty_links | boolean | false                         | redirects html pages to a prettified version with the ".html" extension removed (/page.html => /page, /index.html => /) |
+| key          | type           | default value                 | description                                                                                                             |
+| ------------ | -------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| port         | number         | 3000                          | the port that the server will run on. you can access your site once the server is running at http://localhost:{PORT}    |
+| public_path  | string         | "C:\\\\PATH\\\\TO\\\\WEBSITE" | the local path to your website on your computer. this is where your index.html should be                                |
+| pretty_links | boolean        | false                         | redirects html pages to a prettified version with the ".html" extension removed (/page.html => /page, /index.html => /) |
+| site_domain  | string \| null | null                          | used for the views and followers directives (do not include the protocol. e.g. 'squidee.nekoweb.org')                   |
 
 ## building
 

@@ -1,3 +1,5 @@
+import type { NekowebStats } from "./types";
+
 export function matchBetweenAll(str: string, from: string, to: string, inner: boolean = true) {
 	return matchBetween(str, from, to, inner, true);
 }
@@ -12,4 +14,16 @@ export function matchBetween(str: string, from: string, to: string, inner: boole
 // https://stackoverflow.com/a/14880260
 export function replaceBetween(targetStr: string, srcStr: string, from: number, to: number) {
 	return targetStr.substring(0, from) + srcStr + targetStr.substring(to);
+}
+
+export async function fetchNekowebStats(domain: string) {
+	const res = await fetch(`https://nekoweb.org/api/site/info/${domain}`);
+
+	if (res.ok) {
+		const json = await res.json();
+		return json as NekowebStats;
+	} else {
+		console.error(res.status, res.statusText);
+		return null;
+	}
 }
