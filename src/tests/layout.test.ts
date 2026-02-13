@@ -1,16 +1,16 @@
-import { config, resolveDirectives } from "../../main";
+import { config, resolveDirectives } from "../main";
 import { expect, test } from "bun:test";
 import { resolve } from "path";
 
 test("simple layout 1", async () => {
-	config.public_path = resolve(import.meta.dir, "../public");
+	config.public_path = resolve(import.meta.dir, "public");
 
 	// prettier-ignore
 	const html = /* HTML */
 `<!--# layout file="layouts/main.html" -->
 <!--# block name="content" -->
-	<h2>test page</h2>
-	<p>this is a test page</p>
+<h2>test page</h2>
+<p>this is a test page</p>
 <!--# endblock -->`;
 
 	// prettier-ignore
@@ -24,8 +24,10 @@ test("simple layout 1", async () => {
 		<header>
 			<h1>my website</h1>
 		</header>
-		<h2>test page</h2>
-		<p>this is a test page</p>
+\t\t
+<h2>test page</h2>
+<p>this is a test page</p>
+
 		<footer>
 			<p>footer</p>
 		</footer>
@@ -39,14 +41,14 @@ test("simple layout 1", async () => {
 });
 
 test("simple layout 2", async () => {
-	config.public_path = resolve(import.meta.dir, "../public");
+	config.public_path = resolve(import.meta.dir, "public");
 
 	// prettier-ignore
 	const html = /* HTML */
 `<!--# layout file="layouts/main.html" -->
 <!--# block name="content" -->
-		<h2>test page</h2>
-		<p>this is a test page</p>
+	<h2>test page</h2>
+	<p>this is a test page</p>
 <!--# endblock -->
 `;
 
@@ -61,8 +63,10 @@ test("simple layout 2", async () => {
 		<header>
 			<h1>my website</h1>
 		</header>
-			<h2>test page</h2>
-			<p>this is a test page</p>
+\t\t
+	<h2>test page</h2>
+	<p>this is a test page</p>
+
 		<footer>
 			<p>footer</p>
 		</footer>
@@ -76,7 +80,7 @@ test("simple layout 2", async () => {
 });
 
 test("empty layout 1", async () => {
-	config.public_path = resolve(import.meta.dir, "../public");
+	config.public_path = resolve(import.meta.dir, "public");
 
 	// prettier-ignore
 	const html = /* HTML */
@@ -94,7 +98,9 @@ test("empty layout 1", async () => {
 		<header>
 			<h1>my website</h1>
 		</header>
+\t\t
 		<p>default</p>
+\t\t
 		<footer>
 			<p>footer</p>
 		</footer>

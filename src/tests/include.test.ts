@@ -1,9 +1,9 @@
-import { config, resolveDirectives } from "../../main";
+import { config, resolveDirectives } from "../main";
 import { expect, test } from "bun:test";
 import { resolve } from "path";
 
 test("simple include 1", async () => {
-	config.public_path = resolve(import.meta.dir, "../public");
+	config.public_path = resolve(import.meta.dir, "public");
 
 	// prettier-ignore
 	const html = /* HTML */
