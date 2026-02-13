@@ -101,4 +101,4 @@ Bun.serve({
 	},
 });
 
-console.log(`server running at http://localhost:${config.port}`);
+console.log(`server running at http://localhost:${config.port}${config.pretty_links ? "" : "/index.html"}`);
