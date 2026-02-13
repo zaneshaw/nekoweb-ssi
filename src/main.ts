@@ -1,6 +1,6 @@
 import { resolveIncludeDirective } from "./directives/includeDirective";
 import { resolveLayoutDirective, getEndBlock, resolveBlockDirective } from "./directives/layoutDirective";
-import { resolveFollowersDirective, resolveUpdatesDirective, resolveViewsDirective } from "./directives/statDirectives";
+import { resolveStatDirective } from "./directives/statDirectives";
 import { parseDirectives } from "./parser";
 import type { Config } from "./types";
 import { join, dirname, resolve } from "path";
@@ -34,14 +34,8 @@ export async function resolveDirectives(html: string) {
 			}
 
 			// todo: remove start block if no end block
-		} else if (directive.type == "views") {
-			const resolved = await resolveViewsDirective(html, directive);
-			return resolveDirectives(resolved);
-		} else if (directive.type == "followers") {
-			const resolved = await resolveFollowersDirective(html, directive);
-			return resolveDirectives(resolved);
-		} else if (directive.type == "updates") {
-			const resolved = await resolveUpdatesDirective(html, directive);
+		} else if (directive.type == "views" || directive.type == "followers" || directive.type == "updates") {
+			const resolved = await resolveStatDirective(html, directive);
 			return resolveDirectives(resolved);
 		}
 	}
