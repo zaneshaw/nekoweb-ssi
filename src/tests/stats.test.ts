@@ -56,3 +56,26 @@ test("views, followers, and updates (no format)", async () => {
 
 	expect(resolved).toBe(expected);
 });
+
+test("views, followers, and updates (null site domain)", async () => {
+	config.public_path = resolve(import.meta.dir, "public");
+	config.site_domain = null;
+
+	// prettier-ignore
+	const html = /* HTML */
+`<p><!--# views --></p>
+<p><!--# followers --></p>
+<p><!--# updates --></p>
+`;
+
+	// prettier-ignore
+	const expected = /* HTML */
+`<p>?</p>
+<p>?</p>
+<p>?</p>
+`;
+
+	const resolved = await resolveDirectives(html);
+
+	expect(resolved).toBe(expected);
+});
