@@ -11,9 +11,9 @@ really bad and rushed implementation of nekoweb's new ssi system. can't guarante
 | block directive     | ✅        |                        |
 | flastmod directive  | ❌        |                        |
 | fsize directive     | ❌        |                        |
-| views directive     | ✅        |                        |
-| followers directive | ✅        |                        |
-| updates directive   | ✅        |                        |
+| views directive     | ✅        | cached on server start |
+| followers directive | ✅        | cached on server start |
+| updates directive   | ✅        | cached on server start |
 | follow directive    | ❌        |                        |
 | render directive    | ❌        | i don't have neko tier |
 | error directive     | ❌        | i don't have neko tier |

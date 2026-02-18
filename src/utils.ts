@@ -1,5 +1,10 @@
 import type { NekowebStats } from "./types";
 
+let statsCache: {
+	domain: string;
+	stats: NekowebStats;
+} | null = null;
+
 export function matchBetweenAll(str: string, from: string, to: string, inner: boolean = true) {
 	return matchBetween(str, from, to, inner, true);
 }
@@ -17,13 +22,17 @@ export function replaceBetween(targetStr: string, srcStr: string, from: number, 
 }
 
 export async function fetchNekowebStats(domain: string) {
-	const res = await fetch(`https://nekoweb.org/api/site/info/${domain}`);
+	if (statsCache == null || statsCache.domain != domain) {
+		const res = await fetch(`https://nekoweb.org/api/site/info/${domain}`);
 
-	if (res.ok) {
-		const json = await res.json();
-		return json as NekowebStats;
-	} else {
-		console.error(res.status, res.statusText);
-		return null;
+		if (res.ok) {
+			const json = await res.json();
+			statsCache = { domain, stats: json as NekowebStats };
+		} else {
+			console.error(res.status, res.statusText);
+			return null;
+		}
 	}
+
+	return statsCache.stats;
 }
