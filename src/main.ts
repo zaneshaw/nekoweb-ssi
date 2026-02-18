@@ -79,6 +79,8 @@ Bun.serve({
 				if (url.pathname.endsWith(".html")) {
 					const prettyPath = url.pathname.slice(0, -5);
 					return Response.redirect(new URL(prettyPath, url.origin).toString(), 301);
+				} else if (url.pathname.split("/")?.at(-1)?.includes(".")) {
+					return new Response(Bun.file(join(config.public_path, url.pathname)));
 				} else if (url.pathname == "/index") {
 					return Response.redirect(url.origin, 301);
 				} else {
